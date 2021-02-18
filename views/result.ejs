@@ -1,0 +1,15 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Results</title>
+    <link rel='stylesheet' href='/stylesheets/style.css' />
+  </head>
+  <body>
+    <% if (products) { %>
+      <h2>This is all products for <%= term %></h2>
+      <pre><%= products %></pre>
+    <% } else { %>
+      <h2>There is no results for <%= term %></h2>
+    <% } %>
+  </body>
+</html>
