@@ -3,24 +3,39 @@ const Product = require('../models/products.model');
 
 const maxAllowed = 5;
 const individualDisccount = 10;
+const minTermLength = 3;
 
 const getProducts = async(req, res = response) => {
-    
-    const term = req.query.term;
+    const term = req.body.term;
     const regex = new RegExp( term, 'i' );
+    const isID = !isNaN(term);
 
-    // TODO: REVISAR SI ES UN ID PARA BUSCAR SOLO EN EL ID
+    let results;
+    let products = [];
 
-    // TODO: TERM DEBE SER AL MENOS 3 CARACTERES PARA BUSCAR EN LOS CAMPOS
+    try {
+        if ((term && term.length >= minTermLength && !isID) || !term) {
+            console.log('es texto');
+            results = await Product.find({ "$or": [{ brand: regex }, { description: regex }] }).lean();
+            products = results.map(prod => ({
+                ...prod,
+                disccount: term ? calculateDisccount(prod.description) : null
+            }));
+        } else if (isID) {
+            console.log('es numero');
+            results = await Product.findOne({ id: term });
+            if (results) products.push(results);
+        }
+    } catch (error) {
+        console.log(error);
+        products = null;
+    }
 
-    const results = await Product.find({ "$or": [ { brand: regex }, { description: regex }] }).lean();
-
-    const products = results.map( prod => ({ 
-        ...prod, 
-        descuento: calculateDisccount(prod.description)
-    }));
-
-    res.render('result', { term, products: products.length ? products : null });
+    if (products && products.length) {
+        res.render('./partials/result', { term, products });
+    } else {
+        res.render('./partials/no-results', { term });
+    }
 }
 
 function calculateDisccount(input) {

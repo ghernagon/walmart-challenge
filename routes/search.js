@@ -3,7 +3,7 @@ var router = express.Router();
 const { getProducts } = require('../controllers/products.controller');
 
 /* GET products listing. */
-// router.get('/:term', getProducts);
-router.get('/', getProducts);
+router.get('/', (req, res) => { res.render('search') });
+router.post('/', getProducts);
 
 module.exports = router;

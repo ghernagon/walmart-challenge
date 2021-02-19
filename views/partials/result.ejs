@@ -1,0 +1,23 @@
+<% if (products) { %>
+  <div class="content row">
+    <% products.forEach(function(product) { %>
+      <div class="col-sm-3">
+        <div class="card w-75">
+          <img src="http://<%= product.image %>" class="card-img-top" alt="...">
+          <div class="card-body">
+            <h5 class="card-title">
+              <%= product.brand %>
+            </h5>
+            <p class="card-text">
+              <%= product.description %>
+            </p>
+            <% if (product.disccount) { %>
+              <p>Descuento: <%= product.disccount %>
+              </p>
+              <% } %>
+          </div>
+        </div>
+      </div>
+      <% }); %>
+  </div>
+  <% } %>
