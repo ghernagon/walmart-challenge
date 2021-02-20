@@ -44,6 +44,10 @@ const getProducts = async(req, res = response) => {
     }
 }
 
+/**
+ * Format price to CLP Currency
+ * @param {*} input 
+ */
 function formatCurrency(input) {
     return '$ ' + input.toString().replace(/(\d)(?=(\d{3})+(?!\d))/g, '$1.');
 }
@@ -83,4 +87,10 @@ function findDuplicateCharacters(input) {
 }
 
 
-module.exports = { getProducts };
+module.exports = { 
+    getProducts,
+    findDuplicateCharacters,
+    calculateDisccount,
+    formatCurrency,
+    calculateProductWithDisccount
+};

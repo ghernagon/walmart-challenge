@@ -3,7 +3,9 @@
   "version": "0.0.0",
   "private": true,
   "scripts": {
-    "start": "npx nodemon ./bin/www"
+    "start": "npx nodemon ./bin/www",
+    "test": "mocha",
+    "test-with-coverage": "nyc --reporter=html --reporter=text mocha"
   },
   "dependencies": {
     "bootstrap": "^4.6.0",
@@ -15,5 +17,10 @@
     "http-errors": "~1.6.3",
     "mongoose": "^5.11.17",
     "morgan": "~1.9.1"
+  },
+  "devDependencies": {
+    "chai": "^4.3.0",
+    "mocha": "^8.3.0",
+    "nyc": "^15.1.0"
   }
 }
