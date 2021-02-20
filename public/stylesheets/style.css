@@ -8,6 +8,20 @@ body {
   font-size: 14px;
 }
 
+header > a > img {
+  max-width: 2rem;
+}
+
+.intro {
+  align-items: center;
+  display: flex;
+  flex-direction: column;
+}
+
+.intro > img {
+  max-width: 80%;
+}
+
 .content {
   flex: 1 0 auto;
   margin-top: 2rem;
