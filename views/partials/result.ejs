@@ -1,20 +1,29 @@
 <% if (products) { %>
-  <div class="content row">
+  <div class="content row row-cols-1 row-cols-md-4">
     <% products.forEach(function(product) { %>
-      <div class="col-sm-3">
-        <div class="card w-75">
+      <div class="col mb-4">
+        <div class="card h-100">
           <img src="http://<%= product.image %>" class="card-img-top" alt="...">
           <div class="card-body">
-            <h5 class="card-title">
+            <div class="product-title">
               <%= product.brand %>
-            </h5>
-            <p class="card-text">
+            </div>
+            <div class="card-text">
               <%= product.description %>
-            </p>
+            </div>
             <% if (product.disccount) { %>
-              <p>Descuento: <%= product.disccount %>
-              </p>
+            <div class="offer mt-3">
+              <span class="product-offer-price mr-2">
+                <%= product.offerPrice %>
+              </span>
+                <span class="badge badge-pill badge-danger disccount">
+                  <%= product.disccount %>%
+                </span>
+              </div>
               <% } %>
+              <div class="product-price<%= product.disccount ? '-disccount' : '' %>">
+                <%= product.fullPrice %>
+              </div>
           </div>
         </div>
       </div>

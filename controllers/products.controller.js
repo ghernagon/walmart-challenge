@@ -15,14 +15,17 @@ const getProducts = async(req, res = response) => {
 
     try {
         if ((term && term.length >= minTermLength && !isID) || !term) {
-            console.log('es texto');
             results = await Product.find({ "$or": [{ brand: regex }, { description: regex }] }).lean();
-            products = results.map(prod => ({
-                ...prod,
-                disccount: term ? calculateDisccount(prod.description) : null
-            }));
+            products = results.map(prod => {
+                let disccount = term ? calculateDisccount(prod.description) : null;
+                return {
+                    ...prod,
+                    disccount: disccount,
+                    fullPrice: formatCurrency(prod.price),
+                    offerPrice: disccount ? calculateProductWithDisccount(prod.price, disccount) : null
+                }
+            });
         } else if (isID) {
-            console.log('es numero');
             results = await Product.findOne({ id: term });
             if (results) products.push(results);
         }
@@ -38,11 +41,33 @@ const getProducts = async(req, res = response) => {
     }
 }
 
+function formatCurrency(input) {
+    return '$ ' + input.toString().replace(/(\d)(?=(\d{3})+(?!\d))/g, '$1.');
+}
+
+/**
+ * Calculate product price after disccount
+ * @param {*} price product price
+ * @param {*} disccount product disccount to be applied
+ */
+function calculateProductWithDisccount(price, disccount) {
+    const offer = price - (price * ( disccount / 100 ));
+    return formatCurrency(offer);
+}
+
+/**
+ * Calculate disccount % to be applied
+ * @param {*} input string to calculate disccount
+ */
 function calculateDisccount(input) {
     let result = findDuplicateCharacters(input);
     return result.length > maxAllowed ? maxAllowed * individualDisccount : result.length * individualDisccount;
 }
 
+/**
+ * Find duplicate characters in string
+ * @param {*} input string
+ */
 function findDuplicateCharacters(input) {
     let charCount = input.toLowerCase().replace(/\s/g, '').split('').reduce((acc, val) => {
         acc[val] = ++acc[val] || 1;

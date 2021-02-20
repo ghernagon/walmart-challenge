@@ -5,11 +5,34 @@ html, body {
 body {
   display: flex;
   flex-direction: column;
+  font-size: 14px;
 }
 
 .content {
   flex: 1 0 auto;
   margin-top: 2rem;
+}
+
+.content .product-title {
+  font-weight: bold;
+}
+
+.content .product-offer-price, .content .product-price {
+  font-size: 1.2rem;
+  color: #565656;
+  font-weight: 700;
+  display: inline-block;
+}
+
+.content .product-price-disccount {
+  text-decoration: line-through;
+  font-size: 0.8rem;
+}
+
+.content .offer {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
 }
 
 footer {
