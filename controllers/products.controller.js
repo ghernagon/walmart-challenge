@@ -37,6 +37,7 @@ const getProducts = async(req, res = response) => {
     } catch (error) {
         console.log(error);
         products = null;
+        // TODO: Error Handling
     }
 
     if (products && products.length) {
@@ -51,6 +52,9 @@ const getProducts = async(req, res = response) => {
  * @param {*} input 
  */
 function formatCurrency(input) {
+    if (isNaN(input)) {
+        throw new Error('price must be a number');
+    }
     return '$ ' + input.toString().replace(/(\d)(?=(\d{3})+(?!\d))/g, '$1.');
 }
 
@@ -60,6 +64,12 @@ function formatCurrency(input) {
  * @param {*} disccount product disccount to be applied
  */
 function calculateProductWithDisccount(price, disccount) {
+    if (isNaN(price)) {
+        throw new Error('price must be a number');
+    } else if (isNaN(disccount)) {
+        throw new Error('disccount must be a number');
+    }
+
     const offer = price - (price * ( disccount / 100 ));
     return formatCurrency(offer);
 }
@@ -79,7 +89,7 @@ function calculateDisccount(input) {
  */
 function findDuplicateCharacters(input) {
     if (!(typeof input === 'string' || input instanceof String)) {
-        throw 'description should be a string';
+        throw new Error('description must be a string');
     }
     
     let charCount = input.toLowerCase().replace(/\s/g, '').split('').reduce((acc, val) => {
