@@ -1,3 +1,25 @@
-<h1><%= message %></h1>
-<h2><%= error.status %></h2>
-<pre><%= error.stack %></pre>
+<!doctype html>
+<html lang="en">
+  <head>
+    <%- include('./partials/head'); -%>
+    <title>Error</title>
+  </head>
+  <body>
+    <%- include('./partials/header'); -%>
+    <div class="container-fluid content">
+        <div class="jumbotron jumbotron-fluid">
+            <div class="container">
+                <h1 class="display-4">
+                    <%= error.status %>
+                </h1>
+                <p class="lead">No encontramos la url que buscabas</p>
+                <hr class="my-4">
+            </div>
+        </div>
+    </div>
+    <%- include('./partials/scripts'); -%>
+  </body>
+  <footer>
+    <%- include('./partials/footer'); -%>
+  </footer>
+</html>

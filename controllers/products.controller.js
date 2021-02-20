@@ -10,12 +10,11 @@ const getProducts = async(req, res = response) => {
     const regex = new RegExp( term, 'i' );
     const isID = !isNaN(term);
 
-    let results;
     let products = [];
 
     try {
         if ((term && term.length >= minTermLength && !isID) || !term) {
-            results = await Product.find({ "$or": [{ brand: regex }, { description: regex }] }).lean();
+            let results = await Product.find({ "$or": [{ brand: regex }, { description: regex }] }).lean();
             products = results.map(prod => {
                 let disccount = term ? calculateDisccount(prod.description) : null;
                 return {
@@ -26,8 +25,12 @@ const getProducts = async(req, res = response) => {
                 }
             });
         } else if (isID) {
-            results = await Product.findOne({ id: term });
-            if (results) products.push(results);
+            let result = await Product.findOne({ id: term }).lean();
+            if (result) {
+                let prod = { ...result };
+                prod.fullPrice = formatCurrency(result.price);
+                products.push(prod);
+            }
         }
     } catch (error) {
         console.log(error);
