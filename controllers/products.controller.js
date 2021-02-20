@@ -8,30 +8,32 @@ const minTermLength = 3;
 const getProducts = async(req, res = response) => {
     const term = req.body.term;
     const regex = new RegExp( term, 'i' );
-    const isID = !isNaN(term);
+    const isID = term && !isNaN(term);
 
+    let results = [];
     let products = [];
 
     try {
-        if ((term && term.length >= minTermLength && !isID) || !term) {
-            let results = await Product.find({ "$or": [{ brand: regex }, { description: regex }] }).lean();
-            products = results.map(prod => {
-                let disccount = term ? calculateDisccount(prod.description) : null;
-                return {
-                    ...prod,
-                    disccount: disccount,
-                    fullPrice: formatCurrency(prod.price),
-                    offerPrice: disccount ? calculateProductWithDisccount(prod.price, disccount) : null
-                }
-            });
-        } else if (isID) {
+        if (isID) {
             let result = await Product.findOne({ id: term }).lean();
             if (result) {
-                let prod = { ...result };
-                prod.fullPrice = formatCurrency(result.price);
-                products.push(prod);
+                results.push(result);
+            } else {
+                results = await Product.find({ "$or": [{ brand: regex }, { description: regex }] }).lean();
             }
-        }
+        } else if ((term && term.length >= minTermLength && !isID) || !term) {
+            results = await Product.find({ "$or": [{ brand: regex }, { description: regex }] }).lean();
+        } 
+
+        products = results.map(prod => {
+            let disccount = calculateDisccount(prod.description);
+            return {
+                ...prod,
+                disccount: disccount,
+                fullPrice: formatCurrency(prod.price),
+                offerPrice: disccount ? calculateProductWithDisccount(prod.price, disccount) : null
+            }
+        });
     } catch (error) {
         console.log(error);
         products = null;
@@ -76,6 +78,10 @@ function calculateDisccount(input) {
  * @param {*} input string
  */
 function findDuplicateCharacters(input) {
+    if (!(typeof input === 'string' || input instanceof String)) {
+        throw 'description should be a string';
+    }
+    
     let charCount = input.toLowerCase().replace(/\s/g, '').split('').reduce((acc, val) => {
         acc[val] = ++acc[val] || 1;
         return acc;
