@@ -1,0 +1,20 @@
+version: "3.7"
+
+services:
+  app:
+    build: './app'
+    ports:
+      - "3000:3000"
+    command: bash -c "./wait-for-it.sh mongodb:27017 --timeout=0 && node ./bin/www"
+    depends_on:
+      - "mongodb"
+  mongodb:
+    image: mongo:3.6.8
+    volumes:
+      - ./db:/docker-entrypoint-initdb.d
+    ports:
+      - "27017:27017"
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: brandDiscountsUser
+      MONGO_INITDB_ROOT_PASSWORD: brandDiscountsPassword
+      MONGO_INITDB_DATABASE: desafio_walmart

@@ -2,7 +2,14 @@
   "name": "walmart-challenge",
   "version": "1.0.0",
   "description": "Walmart Challenge",
-  "keywords": ["challenge", "walmart", "mongodb", "webapp", "node", "express"],
+  "keywords": [
+    "challenge",
+    "walmart",
+    "mongodb",
+    "webapp",
+    "node",
+    "express"
+  ],
   "repository": "https://github.com/ghernagon/walmart-challenge.git",
   "homepage": "https://github.com/ghernagon/walmart-challenge",
   "author": "Gerardo Hernández <ghernagon@gmail.com>",
