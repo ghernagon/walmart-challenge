@@ -10,42 +10,57 @@ const getProducts = async(req, res = response) => {
     const regex = new RegExp( term, 'i' );
     const isID = term && !isNaN(term);
 
-    let results = [];
     let products = [];
 
     try {
-        if (isID) {
-            let result = await Product.findOne({ id: term }).lean();
-            console.log('AQUI EL RESULT', result);
-            if (result) {
-                results.push(result);
-            } else {
-                results = await Product.find({ "$or": [{ brand: regex }, { description: regex }] }).lean();
-            }
-        } else if ((term && term.length >= minTermLength && !isID) || !term) {
-            results = await Product.find({ "$or": [{ brand: regex }, { description: regex }] }).lean();
-        } 
-
-        products = results.map(prod => {
-            let disccount = calculateDisccount(prod.description);
-            return {
-                ...prod,
-                disccount: disccount,
-                fullPrice: formatCurrency(prod.price),
-                offerPrice: disccount ? calculateProductWithDisccount(prod.price, disccount) : null
-            }
-        });
+        let results = await findProducts(isID, term, regex);
+        products = mapResults(results);
     } catch (error) {
-        products = null;
         console.log('HA OCURRIDO UN ERROR', error);
-        // TODO: Error Handling
+        products = null;
     }
-
     if (products && products.length) {
-        res.render('./partials/result', { term, products });
+        res.render('./partials/result', { term, products }, (err, html) => res.send({ render: html, data: products }));
     } else {
-        res.render('./partials/no-results', { term });
+        res.render('./partials/no-results', { term }, (err, html) => res.send({ render: html, data: null }));
     }
+}
+
+/**
+ * Perform databse search
+ * @param {*} isID 
+ * @param {*} term 
+ */
+async function findProducts(isID, term, regex) {
+    let results = [];
+    if (isID) {
+        let result = await Product.findOne({ id: term }).lean();
+        if (result) {
+            results.push(result);
+        } else {
+            results = await Product.find({ "$or": [{ brand: regex }, { description: regex }] }).lean();
+        }
+    } else if ((term && term.length >= minTermLength && !isID) || !term) {
+        results = await Product.find({ "$or": [{ brand: regex }, { description: regex }] }).lean();
+    } 
+    return results;
+}
+
+/**
+ * Map results before send back
+ * @param {*} result 
+ */
+function mapResults(result) {
+    return result.map(prod => {
+        let disccount = calculateDisccount(prod.description);
+        delete prod._id;
+        return {
+            ...prod,
+            disccount: disccount,
+            fullPrice: formatCurrency(prod.price),
+            offerPrice: disccount ? calculateProductWithDisccount(prod.price, disccount) : null
+        }
+    });
 }
 
 /**
@@ -111,5 +126,6 @@ module.exports = {
     findDuplicateCharacters,
     calculateDisccount,
     formatCurrency,
-    calculateProductWithDisccount
+    calculateProductWithDisccount,
+    findProducts
 };

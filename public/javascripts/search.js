@@ -7,8 +7,7 @@ $(function () {
         data: data,
         method: 'post'
     }).done((resp) => {
-        console.log('RESPONSE', resp);
-        $('#results').html(resp);
+        $('#results').html(resp.render);
     }).fail((error) => {
         console.log('error', data);
     }).always( () => {

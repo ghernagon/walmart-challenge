@@ -1,8 +1,8 @@
 const chai = require('chai');
-const chaiHttp = require("chai-http");
-chai.use(chaiHttp);
-const expect = chai.expect;
 const sinon = require('sinon');
+const sinonChai = require("sinon-chai");
+const expect = chai.expect;
+chai.use(sinonChai);
 const controller = require('../controllers/products.controller');
 const ProductModel = require('../models/products.model');
 const { mockRequest, mockResponse } = require('mock-req-res');
@@ -100,6 +100,50 @@ describe('Product List', () => {
         await controller.getProducts(req, res);
         sinon.assert.calledWith(ProductModel.findOne, { id: '25' });
         sinon.assert.calledWith(res.render, './partials/result' );
+    });
+
+    it('should return results if term is not provided', async() => {
+        const req = { body: { term: "" }};
+        const res = mockResponse();
+        const productMock = [
+            {
+                "id": 40,
+                "brand": "Marca Acme",
+                "description": "Muñeca lipo 30",
+                "image": "www.lider.cl/catalogo/images/catalogo_no_photo.jpg",
+                "price": 18000
+            }
+        ];
+
+        sinon.stub(ProductModel, 'find').returns({
+            lean: sinon.stub().resolves(productMock)
+        });
+        sinon.stub(controller, 'findProducts').returns(productMock);
+
+        await controller.getProducts(req, res);
+        sinon.assert.calledOnce(ProductModel.find);
+    });
+
+    it('should return results if term is provided', async() => {
+        const req = { body: { term: "Acme" }};
+        const res = mockResponse();
+        const productMock = [
+            {
+                "id": 40,
+                "brand": "Marca Acme",
+                "description": "Muñeca lipo 30",
+                "image": "www.lider.cl/catalogo/images/catalogo_no_photo.jpg",
+                "price": 18000
+            }
+        ];
+
+        sinon.stub(ProductModel, 'find').returns({
+            lean: sinon.stub().resolves(productMock)
+        });
+        sinon.stub(controller, 'findProducts').returns(productMock);
+
+        await controller.getProducts(req, res);
+        sinon.assert.calledOnce(ProductModel.find);
     });
 
     it('should return a no-results partial page if id 88 is provided', async() => {
