@@ -24,7 +24,7 @@ docker-compose up -d
 
 ## To run Unit and Integration Tests
 ```
-docker exec -i -t walmart_app_1 /bin/bash
+docker exec -i -t <YOUR_CONTAINER_NAME> /bin/bash
 npm run test
 ```
 ## To generate test coverage
