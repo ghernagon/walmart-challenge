@@ -4,11 +4,40 @@
 
 https://walmart-challenge-node.herokuapp.com/
 
-## How to run locally
+# How to run
+
+# with Docker
+
+This will build a container for `mongodb` with products collection provision and `app`, then it will run both containers
+
+You can access your [docker](localhost:3000) (http://localhost:3000)
+
+```
+docker-compose up -d 
+```
+
+### If something goes wrong, please use
+```
+docker-compose down
+docker-compose up -d 
+```
+
+## To run Unit and Integration Tests
+```
+docker exec -i -t walmart_app_1 /bin/bash
+npm run test
+```
+## To generate test coverage
+```
+npm run test-with-coverage
+```
+
+# Without Docker
 
 Use the package manager npm
 
 ```
+cd app
 npm install
 ```
 
