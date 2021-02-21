@@ -3,7 +3,8 @@
   "version": "0.0.0",
   "private": true,
   "scripts": {
-    "start": "npx nodemon ./bin/www",
+    "start": "node ./bin/www",
+    "develop": "nodemon ./bin/www",
     "test": "mocha",
     "test-with-coverage": "nyc --reporter=html --reporter=text mocha"
   },
@@ -20,7 +21,12 @@
   },
   "devDependencies": {
     "chai": "^4.3.0",
+    "chai-http": "^4.3.0",
     "mocha": "^8.3.0",
-    "nyc": "^15.1.0"
+    "mock-req-res": "^1.2.0",
+    "nock": "^13.0.7",
+    "nodemon": "^2.0.7",
+    "nyc": "^15.1.0",
+    "sinon": "^9.2.4"
   }
 }

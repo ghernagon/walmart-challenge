@@ -1,7 +1,11 @@
-const chai = require('chai')
-const expect = chai.expect
-
-const controller = require('../controllers/products.controller')
+const chai = require('chai');
+const chaiHttp = require("chai-http");
+chai.use(chaiHttp);
+const expect = chai.expect;
+const sinon = require('sinon');
+const controller = require('../controllers/products.controller');
+const ProductModel = require('../models/products.model');
+const { mockRequest, mockResponse } = require('mock-req-res');
 
 describe("controller findDuplicateCharacters()", () => {
 
@@ -70,3 +74,58 @@ describe("controller calculateProductWithDisccount()", () => {
     });
     
 });
+
+describe('Product List', () => {
+
+    afterEach(() => {
+        sinon.reset();
+        sinon.restore();
+    });
+
+    it('should return a results partial page if id 25 is provided', async() => {
+        const req = { body: { term: "25" }};
+        const res = mockResponse();
+        const productMock = {
+            "id": 1,
+            "brand": "Marca1",
+            "description": "Televisión 54''",
+            "image": "www.lider.cl/catalogo/images/catalogo_no_photo.jpg",
+            "price": 80000
+        }
+
+        sinon.stub(ProductModel, 'findOne').returns({
+            lean: sinon.stub().resolves(productMock)
+        });
+
+        await controller.getProducts(req, res);
+        sinon.assert.calledWith(ProductModel.findOne, { id: '25' });
+        sinon.assert.calledWith(res.render, './partials/result' );
+    });
+
+    it('should return a no-results partial page if id 88 is provided', async() => {
+        const req = { body: { term: "88" }};
+        const res = mockResponse();
+
+        sinon.stub(ProductModel, 'findOne').returns({
+            lean: sinon.stub().resolves(null)
+        });
+        sinon.stub(ProductModel, 'find').returns({
+            lean: sinon.stub().resolves([])
+        });
+
+        // sinon.stub(res, 'render').resolves(responseMock);
+
+        // sinon.mock(ProductModel).expects('findOne').chain('lean').resolves(productMock);
+        //   const response = await controller.getProducts();
+        //   let res = await chai
+        //         .request(app)
+        //         .post('/search')
+        //         .send({ term: "25" })
+
+        await controller.getProducts(req, res);
+        sinon.assert.calledWith(ProductModel.findOne, { id: '88' });
+        sinon.assert.calledWith(ProductModel.find, { '$or': [ { brand: /88/i }, { description: /88/i } ] });
+        sinon.assert.calledWith(res.render, './partials/no-results' );
+    });
+  });
+

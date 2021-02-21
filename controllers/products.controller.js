@@ -16,6 +16,7 @@ const getProducts = async(req, res = response) => {
     try {
         if (isID) {
             let result = await Product.findOne({ id: term }).lean();
+            console.log('AQUI EL RESULT', result);
             if (result) {
                 results.push(result);
             } else {
@@ -35,8 +36,8 @@ const getProducts = async(req, res = response) => {
             }
         });
     } catch (error) {
-        console.log(error);
         products = null;
+        console.log('HA OCURRIDO UN ERROR', error);
         // TODO: Error Handling
     }
 
@@ -101,6 +102,8 @@ function findDuplicateCharacters(input) {
 
     return duplicatedChars;
 }
+
+
 
 
 module.exports = { 

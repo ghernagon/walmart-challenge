@@ -7,6 +7,7 @@ $(function () {
         data: data,
         method: 'post'
     }).done((resp) => {
+        console.log('RESPONSE', resp);
         $('#results').html(resp);
     }).fail((error) => {
         console.log('error', data);
